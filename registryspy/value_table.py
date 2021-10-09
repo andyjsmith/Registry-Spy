@@ -7,10 +7,11 @@ import PySide6.QtCore as QtCore
 
 
 class ValueData(QtWidgets.QTableWidgetItem):
-    def __init__(self, raw_data: bytes, *args, **kwargs):
+    def __init__(self, raw_data: bytes, value, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.raw_data = raw_data
+        self.value = value
 
 
 class ValueTable(QtWidgets.QTableWidget):
@@ -78,8 +79,6 @@ class ValueTable(QtWidgets.QTableWidget):
         for value in reg_values:
             index = self.rowCount()
             self.insertRow(index)
-            print(value.value())
-            print(type(value.value()))
             value_name = QtWidgets.QTableWidgetItem(value.name())
             value_name.setFlags(value_name.flags() & ~
                                 QtCore.Qt.ItemFlag.ItemIsEditable)
@@ -88,8 +87,8 @@ class ValueTable(QtWidgets.QTableWidget):
                 self.reg_type_to_str(value.value_type()))
             value_type.setFlags(value_type.flags() & ~
                                 QtCore.Qt.ItemFlag.ItemIsEditable)
-            value_data = ValueData(value.raw_data(), self.reg_data_to_str(
-                value.value_type(), value.raw_data()))
+            value_data = ValueData(value.raw_data(), value.value(), self.reg_data_to_str(
+                value.value_type(), value.raw_data(), value.value()))
             if len(value.raw_data()) == 0:
                 font = QtGui.QFont()
                 font.setItalic(True)
@@ -148,44 +147,33 @@ class ValueTable(QtWidgets.QTableWidget):
             return "REG_SZ"
         return "UNKNOWN"
 
-    def reg_data_to_str(self, datatype: int, data: bytes) -> str:
-        if len(data) == 0:
+    def reg_data_to_str(self, datatype: int, raw_data: bytes, value) -> str:
+        if len(raw_data) == 0:
             return "(value not set)"
         if datatype == Registry.RegDWord:
             try:
-                return "{0:#010x} ({0})".format(struct.unpack("<L", data)[0])
+                return "{0:#010x} ({0})".format(value)
             except (struct.error, IndexError):
                 pass
         if datatype == Registry.RegQWord:
             try:
-                return "{0:#018x} ({0})".format(struct.unpack("<Q", data)[0])
+                return "{0:#018x} ({0})".format(value)
             except (struct.error, IndexError):
                 pass
         if datatype == Registry.RegBigEndian:
             try:
-                return "{0:#010x} ({0})".format(struct.unpack(">L", data)[0])
+                return "{0:#010x} ({0})".format(value)
             except (struct.error, IndexError):
                 pass
         if datatype == Registry.RegLink:
-            return "REG_LINK"
+            # Not sure what format this will actually be
+            return str(value)
         if datatype == Registry.RegMultiSZ:
-            items = data.split(b"\x00\x00")
-            try:
-                return str(" ".join(data.decode("utf-16le").split("\x00"))).rstrip("\x00")
-            except UnicodeDecodeError:
-                try:
-                    return str(data.decode("cp1252")).rstrip("\x00")
-                except UnicodeDecodeError:
-                    return " ".join(["{:02x}".format(x) for x in data])
+            return " ".join(value)
         if datatype == Registry.RegResourceList:
-            return "REG_RESOURCE_LIST"
+            # Not sure what format this will actually be
+            return str(value)
         if datatype == Registry.RegSZ or datatype == Registry.RegExpandSZ:
-            try:
-                return str(data.decode("utf-16le")).rstrip("\x00")
-            except UnicodeDecodeError:
-                try:
-                    return str(data.decode("cp1252")).rstrip("\x00")
-                except UnicodeDecodeError:
-                    return " ".join(["{:02x}".format(x) for x in data])
+            return value
         else:
-            return " ".join(["{:02x}".format(x) for x in data])
+            return " ".join(["{:02x}".format(x) for x in raw_data])
