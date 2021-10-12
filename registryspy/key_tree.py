@@ -1,3 +1,5 @@
+import struct
+
 from Registry import Registry
 import PySide6.QtCore as QtCore
 import PySide6.QtWidgets as QtWidgets
@@ -100,7 +102,7 @@ class KeyTree(QtWidgets.QTreeWidget):
 
         try:
             self.reg[filename] = Registry.Registry(filename)
-        except Registry.RegistryParse.ParseException:
+        except (Registry.RegistryParse.ParseException, struct.error):
             msgbox = QtWidgets.QMessageBox()
             msgbox.setWindowTitle("Error")
             msgbox.setText("Unable to parse registry file")
