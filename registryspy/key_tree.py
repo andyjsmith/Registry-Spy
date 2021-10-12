@@ -3,6 +3,8 @@ import PySide6.QtCore as QtCore
 import PySide6.QtWidgets as QtWidgets
 import PySide6.QtGui as QtGui
 
+import helpers
+
 
 class KeyItem(QtWidgets.QTreeWidgetItem):
     def __init__(self, path: str, filename: str, *args, **kwargs):
@@ -31,9 +33,9 @@ class KeyTree(QtWidgets.QTreeWidget):
         self.collapsed.connect(self.handle_collapse)
 
         self.key_icon = QtGui.QIcon(
-            self.window().resource_path("img/folder.png"))
+            helpers.resource_path("img/folder.png"))
         self.hive_icon = QtGui.QIcon(
-            self.window().resource_path("img/icon.png"))
+            helpers.resource_path("img/icon.png"))
 
     def get_uri_textbox(self) -> QtWidgets.QLineEdit:
         """Returns the URI textbox from the main form"""

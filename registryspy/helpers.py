@@ -1,3 +1,6 @@
+import os
+import sys
+
 APP_NAME = "Registry Spy"
 VERSION = (0, 0, 1)
 ABOUT_TEXT = f"""\
@@ -18,3 +21,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+
+
+def resource_path(relative_path: str) -> str:
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)

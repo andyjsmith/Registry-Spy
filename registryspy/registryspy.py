@@ -9,7 +9,7 @@ import value_table
 import key_tree
 import hive_info_table
 import license_dialog
-import constants
+import helpers
 
 
 # Set the app ID on windows (helps with making sure icon is used)
@@ -26,7 +26,7 @@ class RegViewer(QtWidgets.QMainWindow):
         super().__init__()
 
         # Set up main window
-        self.setWindowTitle(constants.APP_NAME)
+        self.setWindowTitle(helpers.APP_NAME)
         self.resize(1200, 700)
 
         self.tree = key_tree.KeyTree(self)
@@ -49,6 +49,19 @@ class RegViewer(QtWidgets.QMainWindow):
         file_menu.addAction(quit_action)
         self.menuBar().addMenu(file_menu)
 
+        # Set up find menu
+        find_menu = QtWidgets.QMenu("Find", self)
+        find_action = QtGui.QAction("Find...", self)
+        find_action.setShortcut(QtGui.QKeySequence.Find)
+        find_menu.addAction(find_action)
+        find_next_action = QtGui.QAction("Find Next", self)
+        find_next_action.setShortcut(QtGui.QKeySequence.FindNext)
+        find_menu.addAction(find_next_action)
+        find_previous_action = QtGui.QAction("Find Previous", self)
+        find_previous_action.setShortcut(QtGui.QKeySequence.FindPrevious)
+        find_menu.addAction(find_previous_action)
+        self.menuBar().addMenu(find_menu)
+
         # Set up help menu
         help_menu = QtWidgets.QMenu("Help", self)
         about_action = QtGui.QAction("About", self)
@@ -70,15 +83,15 @@ class RegViewer(QtWidgets.QMainWindow):
         toolbar.toggleViewAction().setEnabled(False)
         toolbar.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
         open_action = QtGui.QAction(
-            QtGui.QIcon(self.resource_path("img/open.png")), "Open Hive", toolbar)
+            QtGui.QIcon(helpers.resource_path("img/open.png")), "Open Hive", toolbar)
         open_action.triggered.connect(self.show_open_file)
         toolbar.addAction(open_action)
         close_action = QtGui.QAction(
-            QtGui.QIcon(self.resource_path("img/close.png")), "Close Selected Hive", toolbar)
+            QtGui.QIcon(helpers.resource_path("img/close.png")), "Close Selected Hive", toolbar)
         close_action.triggered.connect(self.tree.remove_selected_hive)
         toolbar.addAction(close_action)
         close_all_action = QtGui.QAction(
-            QtGui.QIcon(self.resource_path("img/close_all.png")), "Close All Hives", toolbar)
+            QtGui.QIcon(helpers.resource_path("img/close_all.png")), "Close All Hives", toolbar)
         close_all_action.triggered.connect(self.tree.remove_all_hives)
         toolbar.addAction(close_all_action)
         self.addToolBar(toolbar)
@@ -144,7 +157,7 @@ class RegViewer(QtWidgets.QMainWindow):
 
     def show_about(self):
         QtWidgets.QMessageBox().about(
-            self, f"About {constants.APP_NAME}", constants.ABOUT_TEXT)
+            self, f"About {helpers.APP_NAME}", helpers.ABOUT_TEXT)
 
     def show_licenses(self):
         license = license_dialog.LicenseDialog(reg_viewer)
@@ -166,16 +179,6 @@ class RegViewer(QtWidgets.QMainWindow):
 
     def open_file(self, filename: str):
         self.tree.load_hive(filename)
-
-    def resource_path(self, relative_path: str) -> str:
-        """ Get absolute path to resource, works for dev and for PyInstaller """
-        try:
-            # PyInstaller creates a temp folder and stores path in _MEIPASS
-            base_path = sys._MEIPASS
-        except Exception:
-            base_path = os.path.abspath(".")
-
-        return os.path.join(base_path, relative_path)
 
 
 if __name__ == "__main__":
@@ -207,7 +210,7 @@ if __name__ == "__main__":
 
     reg_viewer = RegViewer()
 
-    app.setWindowIcon(QtGui.QIcon(reg_viewer.resource_path("img/icon.ico")))
+    app.setWindowIcon(QtGui.QIcon(helpers.resource_path("img/icon.ico")))
 
     reg_viewer.show()
 

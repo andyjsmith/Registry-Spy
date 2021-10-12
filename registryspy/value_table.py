@@ -5,6 +5,8 @@ import PySide6.QtWidgets as QtWidgets
 import PySide6.QtGui as QtGui
 import PySide6.QtCore as QtCore
 
+import helpers
+
 
 class ValueData(QtWidgets.QTableWidgetItem):
     def __init__(self, raw_data: bytes, value, *args, **kwargs):
@@ -44,11 +46,11 @@ class ValueTable(QtWidgets.QTableWidget):
         self.selectionModel().selectionChanged.connect(self.handle_selection_change)
 
         self.REG_BIN_ICON = QtGui.QIcon(
-            self.window().resource_path("img/reg_bin.png"))
+            helpers.resource_path("img/reg_bin.png"))
         self.REG_NUM_ICON = QtGui.QIcon(
-            self.window().resource_path("img/reg_num.png"))
+            helpers.resource_path("img/reg_num.png"))
         self.REG_STR_ICON = QtGui.QIcon(
-            self.window().resource_path("img/reg_str.png"))
+            helpers.resource_path("img/reg_str.png"))
 
     def handle_selection_change(self, selected: QtCore.QItemSelection, deselected: QtCore.QItemSelection):
         if len(selected.indexes()) < 1:
