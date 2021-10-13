@@ -1,5 +1,4 @@
 import sys
-import os
 
 import PySide6.QtGui as QtGui
 import PySide6.QtWidgets as QtWidgets
@@ -9,6 +8,7 @@ import value_table
 import key_tree
 import hive_info_table
 import license_dialog
+import find_dialog
 import helpers
 
 
@@ -53,6 +53,7 @@ class RegViewer(QtWidgets.QMainWindow):
         find_menu = QtWidgets.QMenu("Find", self)
         find_action = QtGui.QAction("Find...", self)
         find_action.setShortcut(QtGui.QKeySequence.Find)
+        find_action.triggered.connect(self.show_find)
         find_menu.addAction(find_action)
         find_next_action = QtGui.QAction("Find Next", self)
         find_next_action.setShortcut(QtGui.QKeySequence.FindNext)
@@ -94,6 +95,10 @@ class RegViewer(QtWidgets.QMainWindow):
             QtGui.QIcon(helpers.resource_path("img/close_all.png")), "Close All Hives", toolbar)
         close_all_action.triggered.connect(self.tree.remove_all_hives)
         toolbar.addAction(close_all_action)
+        find_action = QtGui.QAction(
+            QtGui.QIcon(helpers.resource_path("img/find.png")), "Close All Hives", toolbar)
+        find_action.triggered.connect(self.show_find)
+        toolbar.addAction(find_action)
         self.addToolBar(toolbar)
 
         # Set up main layout
@@ -155,13 +160,18 @@ class RegViewer(QtWidgets.QMainWindow):
         self.progress_bar.hide()
         self.statusBar().addPermanentWidget(self.progress_bar)
 
+        self.find_dialog = find_dialog.FindDialog(self)
+
     def show_about(self):
         QtWidgets.QMessageBox().about(
             self, f"About {helpers.APP_NAME}", helpers.ABOUT_TEXT)
 
     def show_licenses(self):
-        license = license_dialog.LicenseDialog(reg_viewer)
+        license = license_dialog.LicenseDialog(self)
         license.exec()
+
+    def show_find(self):
+        self.find_dialog.exec()
 
     def show_open_file(self):
         """Show the open file dialog"""
