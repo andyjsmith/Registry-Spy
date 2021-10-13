@@ -21,9 +21,9 @@ class LicenseDialog(QtWidgets.QDialog):
         stream = QtCore.QTextStream(text_file)
         text.setPlainText(stream.readAll())
 
-        QBtn = QtWidgets.QDialogButtonBox.StandardButton.Ok
+        ok_btn = QtWidgets.QDialogButtonBox.StandardButton.Ok
 
-        self.buttonBox = QtWidgets.QDialogButtonBox(QBtn)
+        self.buttonBox = QtWidgets.QDialogButtonBox(ok_btn)
         self.buttonBox.accepted.connect(self.accept)
 
         self.layout = QtWidgets.QVBoxLayout()
