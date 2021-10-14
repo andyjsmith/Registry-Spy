@@ -1,7 +1,9 @@
 import PySide6.QtCore as QtCore
 import PySide6.QtWidgets as QtWidgets
+from Registry import Registry
 
 import helpers
+import key_tree
 
 
 class FindDialog(QtWidgets.QDialog):
@@ -28,7 +30,7 @@ class FindDialog(QtWidgets.QDialog):
         self.buttonBox.addButton(
             QtWidgets.QDialogButtonBox.StandardButton.Cancel)
         self.buttonBox.rejected.connect(self.closed)
-        self.buttonBox.accepted.connect(self.find)
+        self.buttonBox.accepted.connect(self.handle_find)
 
         category_group = QtWidgets.QGroupBox(self)
         category_group.setTitle("Search in")
@@ -56,9 +58,81 @@ class FindDialog(QtWidgets.QDialog):
         self.text.setFocus()
         super().showEvent(event)
 
-    def find(self):
+    def handle_find(self):
+        active_key: key_tree.KeyItem = self.parent().tree.get_selected_key()
+        if active_key is None:
+            self.close()
+            self.accept()
+            msgbox = QtWidgets.QMessageBox()
+            msgbox.setWindowTitle("Error")
+            msgbox.setText(
+                "Select a key or hive first.")
+            msgbox.setIcon(QtWidgets.QMessageBox.Critical)
+            msgbox.exec()
+            return
+
+        hive: Registry.Registry = self.parent().tree.reg[active_key.filename]
+        key = hive.open(active_key.path)
         self.close()
         self.accept()
+
+        self.parent().progress_bar.show()
+        self.parent().progress_bar.setMinimum(0)
+        self.parent().progress_bar.setMaximum(0)
+        self.parent().progress_bar.setValue(0)
+        result = self.find(key, self.text.text())
+        self.parent().progress_bar.setMaximum(100)
+        self.parent().progress_bar.setValue(100)
+        self.parent().progress_bar.hide()
+
+        if result is None:
+            self.parent().tree.select_key_from_path("")
+            msgbox = QtWidgets.QMessageBox()
+            msgbox.setWindowTitle("Warning")
+            msgbox.setText(
+                "Term not found. Looping back to start.")
+            msgbox.setIcon(QtWidgets.QMessageBox.Warning)
+            msgbox.exec()
+            return
+        sanitized_path = self.parent().tree.parse_uri(result, root=hive.root().name())
+        self.parent().tree.select_key_from_path(sanitized_path)
+        print(result)
+
+    def find(self, starting_key: Registry.RegistryKey, term: str, case_sensitive=False, exact_match=False) -> str:
+        term = term.upper()
+
+        def search(start_key: Registry.RegistryKey, term: str):
+            for subkey in start_key.subkeys():
+                if term in subkey.name().upper():
+                    print(subkey.name())
+                    return subkey.path()
+                result = search(subkey, term)
+                if result is not None:
+                    return result
+            return None
+
+        match = search(starting_key, term)
+        if match is not None:
+            return match
+
+        current_key = starting_key
+        try:
+            while current_key.parent():
+                subkeys = current_key.parent().subkeys()
+                index = next((i for i, subkey in enumerate(subkeys)
+                             if subkey.name() == current_key.name()))
+                subkeys = subkeys[index+1:]
+                for subkey in subkeys:
+                    if term in subkey.name().upper():
+                        return subkey.path()
+                    result = search(subkey, term)
+                    if result is not None:
+                        return result
+                current_key = current_key.parent()
+        except Registry.RegistryKeyHasNoParentException:
+            pass
+
+        return None
 
     def closed(self):
         self.close()

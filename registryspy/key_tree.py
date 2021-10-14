@@ -133,14 +133,18 @@ class KeyTree(QtWidgets.QTreeWidget):
         else:
             return self.reg[key.filename].hive_type().name + "\\" + key.path
 
-    def parse_uri(self, uri: str, hive_type: str) -> str:
+    def parse_uri(self, uri: str, hive_type: str = None, root: str = None) -> str:
         """Parses a user-specified URI into a registry path"""
 
         # Sanitize URI
         uri = uri.strip()
         uri = uri.strip("\\")
-        uri = uri.replace(hive_type + "\\", "")
-        uri = uri.strip("\\")
+        if hive_type is not None:
+            uri = uri.replace(hive_type + "\\", "")
+            uri = uri.strip("\\")
+        if root is not None:
+            uri = uri.replace(root + "\\", "")
+            uri = uri.strip("\\")
 
         if uri == "" or uri == hive_type:
             return ""
@@ -250,7 +254,7 @@ class KeyTree(QtWidgets.QTreeWidget):
             msgbox.setWindowTitle("Error")
             msgbox.setText(
                 "Key was not found")
-            msgbox.setIcon(QtWidgets.QMessageBox.Warning)
+            msgbox.setIcon(QtWidgets.QMessageBox.Critical)
             msgbox.exec()
             return
 
