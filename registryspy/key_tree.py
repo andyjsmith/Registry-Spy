@@ -118,6 +118,9 @@ class KeyTree(QtWidgets.QTreeWidget):
         self.load_subkeys(self.roots[filename])
 
         self.insertTopLevelItems(0, [self.roots[filename]])
+        self.clearSelection()
+        self.roots[filename].setSelected(True)
+        self.setFocus()
 
     def set_uri(self, index: QtCore.QModelIndex):
         """Set navbar full key path"""
