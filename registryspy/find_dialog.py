@@ -77,12 +77,10 @@ class FindDialog(QtWidgets.QDialog):
         self.accept()
 
         self.parent().progress_bar.show()
-        self.parent().progress_bar.setMinimum(0)
-        self.parent().progress_bar.setMaximum(0)
+        self.parent().progress_bar.setRange(0, 0)
         self.parent().progress_bar.setValue(0)
         result = self.find(key, self.text.text())
-        self.parent().progress_bar.setMaximum(100)
-        self.parent().progress_bar.setValue(100)
+        self.parent().progress_bar.setRange(0, 100)
         self.parent().progress_bar.hide()
 
         if result is None:
