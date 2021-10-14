@@ -117,7 +117,6 @@ class KeyTree(QtWidgets.QTreeWidget):
         self.roots[filename].setIcon(0, self.hive_icon)
         self.load_subkeys(self.roots[filename])
 
-        self.indexOfTopLevelItem(self.roots[filename])
         self.insertTopLevelItems(0, [self.roots[filename]])
 
     def set_uri(self, index: QtCore.QModelIndex):
