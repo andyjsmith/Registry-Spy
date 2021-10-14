@@ -30,6 +30,7 @@ class RegViewer(QtWidgets.QMainWindow):
         self.resize(1200, 700)
 
         self.tree = key_tree.KeyTree(self)
+        self.find_dialog = find_dialog.FindDialog(self)
 
         # Set up file menu
         file_menu = QtWidgets.QMenu("File", self)
@@ -38,9 +39,13 @@ class RegViewer(QtWidgets.QMainWindow):
         open_action.triggered.connect(self.show_open_file)
         file_menu.addAction(open_action)
         close_action = QtGui.QAction("Close Selected Hive", self)
+        close_action.setShortcut(QtGui.QKeySequence(
+            QtCore.Qt.SHIFT | QtCore.Qt.Key_Delete))
         close_action.triggered.connect(self.tree.remove_selected_hive)
         file_menu.addAction(close_action)
         close_all_action = QtGui.QAction("Close All Hives", self)
+        close_all_action.setShortcut(QtGui.QKeySequence(
+            QtCore.Qt.CTRL | QtCore.Qt.SHIFT | QtCore.Qt.Key_Delete))
         close_all_action.triggered.connect(self.tree.remove_all_hives)
         file_menu.addAction(close_all_action)
         file_menu.addSeparator()
@@ -57,6 +62,7 @@ class RegViewer(QtWidgets.QMainWindow):
         find_menu.addAction(find_action)
         find_next_action = QtGui.QAction("Find Next", self)
         find_next_action.setShortcut(QtGui.QKeySequence.FindNext)
+        find_next_action.triggered.connect(self.find_dialog.handle_find)
         find_menu.addAction(find_next_action)
         find_previous_action = QtGui.QAction("Find Previous", self)
         find_previous_action.setShortcut(QtGui.QKeySequence.FindPrevious)
@@ -96,7 +102,7 @@ class RegViewer(QtWidgets.QMainWindow):
         close_all_action.triggered.connect(self.tree.remove_all_hives)
         toolbar.addAction(close_all_action)
         find_action = QtGui.QAction(
-            QtGui.QIcon(helpers.resource_path("img/find.png")), "Close All Hives", toolbar)
+            QtGui.QIcon(helpers.resource_path("img/find.png")), "Find", toolbar)
         find_action.triggered.connect(self.show_find)
         toolbar.addAction(find_action)
         self.addToolBar(toolbar)
@@ -159,8 +165,6 @@ class RegViewer(QtWidgets.QMainWindow):
         self.progress_bar.setMaximumWidth(100)
         self.progress_bar.hide()
         self.statusBar().addPermanentWidget(self.progress_bar)
-
-        self.find_dialog = find_dialog.FindDialog(self)
 
     def show_about(self):
         QtWidgets.QMessageBox().about(
