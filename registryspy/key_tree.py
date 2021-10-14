@@ -210,7 +210,7 @@ class KeyTree(QtWidgets.QTreeWidget):
             self.clearSelection()
             self.scrollToItem(parent)
             parent.setSelected(True)
-            self.window().tree.setFocus()
+            self.setFocus()
             return
 
         for level in range(levels):
@@ -226,7 +226,7 @@ class KeyTree(QtWidgets.QTreeWidget):
                         self.clearSelection()
                         self.scrollToItem(parent.child(c))
                         parent.child(c).setSelected(True)
-                        self.window().tree.setFocus()
+                        self.setFocus()
                         return parent.child(c)
 
                     # Set parent to new child
