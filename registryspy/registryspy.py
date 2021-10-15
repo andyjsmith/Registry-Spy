@@ -33,7 +33,7 @@ class RegViewer(QtWidgets.QMainWindow):
         self.find_dialog = find_dialog.FindDialog(self)
 
         # Set up file menu
-        file_menu = QtWidgets.QMenu("File", self)
+        file_menu = QtWidgets.QMenu("&File", self)
         open_action = QtGui.QAction("Open Hive", self)
         open_action.setShortcut(QtGui.QKeySequence.Open)
         open_action.triggered.connect(self.show_open_file)
@@ -55,7 +55,7 @@ class RegViewer(QtWidgets.QMainWindow):
         self.menuBar().addMenu(file_menu)
 
         # Set up find menu
-        find_menu = QtWidgets.QMenu("Find", self)
+        find_menu = QtWidgets.QMenu("Fin&d", self)
         find_action = QtGui.QAction("Find...", self)
         find_action.setShortcut(QtGui.QKeySequence.Find)
         find_action.triggered.connect(self.show_find)
@@ -69,8 +69,16 @@ class RegViewer(QtWidgets.QMainWindow):
         find_menu.addAction(find_previous_action)
         self.menuBar().addMenu(find_menu)
 
+        # Set up view menu
+        view_menu = QtWidgets.QMenu("&View", self)
+        self.native_style_action = QtGui.QAction("Use native style", self)
+        self.native_style_action.setCheckable(True)
+        self.native_style_action.toggled.connect(self.toggle_style)
+        view_menu.addAction(self.native_style_action)
+        self.menuBar().addMenu(view_menu)
+
         # Set up help menu
-        help_menu = QtWidgets.QMenu("Help", self)
+        help_menu = QtWidgets.QMenu("&Help", self)
         about_action = QtGui.QAction("About", self)
         about_action.triggered.connect(self.show_about)
         help_menu.addAction(about_action)
@@ -194,32 +202,53 @@ class RegViewer(QtWidgets.QMainWindow):
     def open_file(self, filename: str):
         self.tree.load_hive(filename)
 
+    def toggle_style(self):
+        if self.native_style_action.isChecked():
+            app.setStyle(initial_style)
+        else:
+            app.setStyle("fusion")
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+    initial_style = app.style().name()
     app.setStyle("fusion")
 
-    # f = QtCore.QFile("stylesheet.qss")
+    # f = QtCore.QFile("qdarkstyle/dark/style.qss")
     # f.open(QtCore.QFile.ReadOnly | QtCore.QFile.Text)
     # qss = QtCore.QTextStream(f)
     # app.setStyleSheet(qss.readAll())
 
     # Dark Mode
+    # https://github.com/mguludag/QEasySettings/blob/main/qeasysettings.cpp
     # palette = QtGui.QPalette()
     # palette.setColor(QtGui.QPalette.Window, QtGui.QColor(53, 53, 53))
     # palette.setColor(QtGui.QPalette.WindowText, QtCore.Qt.white)
-    # palette.setColor(QtGui.QPalette.Base, QtGui.QColor(15, 15, 15))
+    # palette.setColor(QtGui.QPalette.Base, QtGui.QColor(25, 25, 25))
     # palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(53, 53, 53))
-    # palette.setColor(QtGui.QPalette.ToolTipBase, QtCore.Qt.white)
+    # palette.setColor(QtGui.QPalette.ToolTipBase, QtGui.QColor(53, 53, 53))
     # palette.setColor(QtGui.QPalette.ToolTipText, QtCore.Qt.white)
     # palette.setColor(QtGui.QPalette.Text, QtCore.Qt.white)
     # palette.setColor(QtGui.QPalette.Button, QtGui.QColor(53, 53, 53))
     # palette.setColor(QtGui.QPalette.ButtonText, QtCore.Qt.white)
     # palette.setColor(QtGui.QPalette.BrightText, QtCore.Qt.red)
-
-    # palette.setColor(QtGui.QPalette.Highlight,
-    #                  QtGui.QColor(142, 45, 197).lighter())
+    # palette.setColor(QtGui.QPalette.Link, QtGui.QColor(42, 130, 218))
+    # palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor(42, 130, 218))
     # palette.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
+    # palette.setColor(QtGui.QPalette.Disabled,
+    #                  QtGui.QPalette.Text, QtGui.QColor(164, 166, 168))
+    # palette.setColor(QtGui.QPalette.Disabled,
+    #                  QtGui.QPalette.WindowText, QtGui.QColor(164, 166, 168))
+    # palette.setColor(QtGui.QPalette.Disabled,
+    #                  QtGui.QPalette.ButtonText, QtGui.QColor(164, 166, 168))
+    # palette.setColor(QtGui.QPalette.Disabled,
+    #                  QtGui.QPalette.HighlightedText, QtGui.QColor(164, 166, 168))
+    # palette.setColor(QtGui.QPalette.Disabled,
+    #                  QtGui.QPalette.Base, QtGui.QColor(68, 68, 68))
+    # palette.setColor(QtGui.QPalette.Disabled,
+    #                  QtGui.QPalette.Window, QtGui.QColor(68, 68, 68))
+    # palette.setColor(QtGui.QPalette.Disabled,
+    #                  QtGui.QPalette.Highlight, QtGui.QColor(68, 68, 68))
     # app.setPalette(palette)
 
     reg_viewer = RegViewer()
