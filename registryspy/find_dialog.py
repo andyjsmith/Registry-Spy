@@ -1,9 +1,17 @@
+import enum
+
 import PySide6.QtCore as QtCore
 import PySide6.QtWidgets as QtWidgets
 from Registry import Registry
 
 import helpers
 import key_tree
+
+
+class ResultType(enum.Enum):
+    KEY = 0
+    VALUE = 1
+    DATA = 2
 
 
 class FindDialog(QtWidgets.QDialog):
@@ -42,16 +50,16 @@ class FindDialog(QtWidgets.QDialog):
         category_group.setTitle("Search in")
         category_group_layout = QtWidgets.QVBoxLayout(category_group)
 
-        key_category = QtWidgets.QCheckBox("Keys", self)
-        key_category.setChecked(True)
-        value_category = QtWidgets.QCheckBox("Values", self)
-        value_category.setChecked(True)
-        data_category = QtWidgets.QCheckBox("Data", self)
-        data_category.setChecked(True)
+        self.key_search = QtWidgets.QCheckBox("Keys", self)
+        self.key_search.setChecked(True)
+        self.value_search = QtWidgets.QCheckBox("Values", self)
+        self.value_search.setChecked(True)
+        self.data_search = QtWidgets.QCheckBox("Data", self)
+        self.data_search.setChecked(True)
 
-        category_group_layout.addWidget(key_category)
-        category_group_layout.addWidget(value_category)
-        category_group_layout.addWidget(data_category)
+        category_group_layout.addWidget(self.key_search)
+        category_group_layout.addWidget(self.value_search)
+        category_group_layout.addWidget(self.data_search)
         category_group_layout.addStretch()
         options_container_layout.addWidget(category_group)
 
@@ -80,27 +88,31 @@ class FindDialog(QtWidgets.QDialog):
 
     def handle_find(self):
         active_key: key_tree.KeyItem = self.parent().tree.get_selected_key()
-        if active_key is None:
-            self.close()
-            self.accept()
-            helpers.show_message_box(
-                "Select a key or hive first.", alert_type=helpers.MessageBoxTypes.CRITICAL)
-            return
-
         if self.text.text() == "":
             helpers.show_message_box(
                 "Enter a search term first.", alert_type=helpers.MessageBoxTypes.CRITICAL)
             return
 
-        hive: Registry.Registry = self.parent().tree.reg[active_key.filename]
-        key = hive.open(active_key.path)
+        if not (self.key_search.isChecked() or self.value_search.isChecked() or self.data_search.isChecked()):
+            helpers.show_message_box(
+                "You must select one type to search in.", alert_type=helpers.MessageBoxTypes.CRITICAL)
+            return
+
         self.close()
         self.accept()
+
+        if active_key is None:
+            helpers.show_message_box(
+                "Select a key or hive first.", alert_type=helpers.MessageBoxTypes.CRITICAL)
+            return
+
+        hive: Registry.Registry = self.parent().tree.reg[active_key.filename]
+        current_key = hive.open(active_key.path)
 
         self.parent().progress_bar.show()
         self.parent().progress_bar.setRange(0, 0)
         self.parent().progress_bar.setValue(0)
-        result = self.find(key,
+        result = self.find(current_key,
                            self.text.text(),
                            case_sensitive=self.case_sensitive.isChecked(),
                            exact_match=self.exact_match.isChecked())
@@ -112,40 +124,63 @@ class FindDialog(QtWidgets.QDialog):
             helpers.show_message_box(
                 "Term not found. Looping back to start.", alert_type=helpers.MessageBoxTypes.WARNING)
             return
-        sanitized_path = self.parent().tree.parse_uri(result, root=hive.root().name())
-        self.parent().tree.select_key_from_path(sanitized_path)
 
-    def find(self, starting_key: Registry.RegistryKey, term: str, case_sensitive=False, exact_match=False) -> str:
-        """Find the next matching subkey or value"""
+        result_type, result_key, result_value = result
+        sanitized_path = self.parent().tree.parse_uri(
+            result_key, root=hive.root().name())
+        self.parent().tree.select_key_from_path(sanitized_path)
+        if result_type == ResultType.VALUE or result_type == ResultType.DATA:
+            self.parent().value_table.select_value(result_value)
+
+    def find(self, starting_key: Registry.RegistryKey, term: str, case_sensitive=False, exact_match=False, search_keys=True, search_values=True, search_data=True) -> tuple[ResultType, str, str]:
+        """Find the next matching subkey or value. Returns (ResultType, key, value)"""
 
         if not case_sensitive:
             term = term.upper()
 
-        def check_match(subkey: Registry.RegistryKey) -> bool:
+        def check_match(text: str) -> bool:
             """Check if a subkey matches the search term"""
-            if case_sensitive:
-                subkey_name = subkey.name()
-            else:
-                subkey_name = subkey.name().upper()
+            if not case_sensitive:
+                text = text.upper()
             if exact_match:
-                if term == subkey_name:
+                if term == text:
                     return True
             else:
-                if term in subkey_name:
+                if term in text:
                     return True
 
             return False
 
-        def search(start_key: Registry.RegistryKey, term: str):
+        def search(start_key: Registry.RegistryKey, term: str, start_at_value=0, skip_start_key_name=False) -> tuple[ResultType, str, str]:
+            """Returns (ResultType, key, value)"""
+
+            # Check the start key name if asked (i.e. if the search has just started)
+            if self.key_search.isChecked() and not skip_start_key_name:
+                if check_match(start_key.name()):
+                    return ResultType.KEY, start_key.path(), None
+
+            # Check through the key's values
+            values = start_key.values()[start_at_value:]
+            if self.value_search.isChecked():
+                for value in values:
+                    if check_match(value.name()):
+                        return ResultType.VALUE, start_key.path(), value.name(),
+
+            # Recurse through the subkeys
             for subkey in start_key.subkeys():
-                if check_match(subkey):
-                    return subkey.path()
+                # Check subkey name
+                if self.key_search.isChecked() and check_match(subkey.name()):
+                    return ResultType.KEY, subkey.path(), None
                 result = search(subkey, term)
                 if result is not None:
+                    # Found a recursive match!
                     return result
+
+            # No match was found
             return None
 
-        match = search(starting_key, term)
+        match = search(starting_key, term,
+                       start_at_value=self.parent().value_table.get_selected_row() + 1, skip_start_key_name=True)
         if match is not None:
             return match
 
@@ -157,8 +192,6 @@ class FindDialog(QtWidgets.QDialog):
                              if subkey.name() == current_key.name()))
                 subkeys = subkeys[index+1:]
                 for subkey in subkeys:
-                    if check_match(subkey):
-                        return subkey.path()
                     result = search(subkey, term)
                     if result is not None:
                         return result

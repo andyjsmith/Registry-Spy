@@ -179,3 +179,17 @@ class ValueTable(QtWidgets.QTableWidget):
             return value
         else:
             return " ".join(["{:02x}".format(x) for x in raw_data])
+
+    def select_value(self, value: str):
+        for i in range(self.rowCount()):
+            if (value == self.item(i, 0).text()):
+                self.clearSelection()
+                self.selectRow(i)
+                self.scrollToItem(self.item(i, 0))
+                self.setFocus()
+
+    def get_selected_row(self):
+        if len(self.selectedItems()) > 0:
+            return self.selectedItems()[0].row()
+        else:
+            return -1
