@@ -12,6 +12,8 @@ class FindDialog(QtWidgets.QDialog):
 
         self.setWindowTitle("Find")
         self.resize(400, 200)
+        self.setWindowFlags(QtCore.Qt.Dialog |
+                            QtCore.Qt.MSWindowsFixedSizeDialogHint)
 
         text_group = QtWidgets.QGroupBox(self)
         text_group.setTitle("Search for")
@@ -32,6 +34,10 @@ class FindDialog(QtWidgets.QDialog):
         self.buttonBox.rejected.connect(self.closed)
         self.buttonBox.accepted.connect(self.handle_find)
 
+        options_container = QtWidgets.QWidget()
+        options_container_layout = QtWidgets.QHBoxLayout()
+        options_container.setLayout(options_container_layout)
+
         category_group = QtWidgets.QGroupBox(self)
         category_group.setTitle("Search in")
         category_group_layout = QtWidgets.QVBoxLayout(category_group)
@@ -46,10 +52,24 @@ class FindDialog(QtWidgets.QDialog):
         category_group_layout.addWidget(key_category)
         category_group_layout.addWidget(value_category)
         category_group_layout.addWidget(data_category)
+        category_group_layout.addStretch()
+        options_container_layout.addWidget(category_group)
+
+        options_group = QtWidgets.QGroupBox(self)
+        options_group.setTitle("Options")
+        options_group_layout = QtWidgets.QVBoxLayout(options_group)
+
+        self.case_sensitive = QtWidgets.QCheckBox("Case Sensitive", self)
+        self.exact_match = QtWidgets.QCheckBox("Exact Match", self)
+
+        options_group_layout.addWidget(self.case_sensitive)
+        options_group_layout.addWidget(self.exact_match)
+        options_group_layout.addStretch()
+        options_container_layout.addWidget(options_group)
 
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.addWidget(text_group)
-        self.layout.addWidget(category_group)
+        self.layout.addWidget(options_container)
         self.layout.addWidget(self.buttonBox)
         self.setLayout(self.layout)
 
@@ -80,7 +100,10 @@ class FindDialog(QtWidgets.QDialog):
         self.parent().progress_bar.show()
         self.parent().progress_bar.setRange(0, 0)
         self.parent().progress_bar.setValue(0)
-        result = self.find(key, self.text.text())
+        result = self.find(key,
+                           self.text.text(),
+                           case_sensitive=self.case_sensitive.isChecked(),
+                           exact_match=self.exact_match.isChecked())
         self.parent().progress_bar.setRange(0, 100)
         self.parent().progress_bar.hide()
 
@@ -91,15 +114,31 @@ class FindDialog(QtWidgets.QDialog):
             return
         sanitized_path = self.parent().tree.parse_uri(result, root=hive.root().name())
         self.parent().tree.select_key_from_path(sanitized_path)
-        print(result)
 
     def find(self, starting_key: Registry.RegistryKey, term: str, case_sensitive=False, exact_match=False) -> str:
-        term = term.upper()
+        """Find the next matching subkey or value"""
+
+        if not case_sensitive:
+            term = term.upper()
+
+        def check_match(subkey: Registry.RegistryKey) -> bool:
+            """Check if a subkey matches the search term"""
+            if case_sensitive:
+                subkey_name = subkey.name()
+            else:
+                subkey_name = subkey.name().upper()
+            if exact_match:
+                if term == subkey_name:
+                    return True
+            else:
+                if term in subkey_name:
+                    return True
+
+            return False
 
         def search(start_key: Registry.RegistryKey, term: str):
             for subkey in start_key.subkeys():
-                if term in subkey.name().upper():
-                    print(subkey.name())
+                if check_match(subkey):
                     return subkey.path()
                 result = search(subkey, term)
                 if result is not None:
@@ -118,7 +157,7 @@ class FindDialog(QtWidgets.QDialog):
                              if subkey.name() == current_key.name()))
                 subkeys = subkeys[index+1:]
                 for subkey in subkeys:
-                    if term in subkey.name().upper():
+                    if check_match(subkey):
                         return subkey.path()
                     result = search(subkey, term)
                     if result is not None:
