@@ -118,7 +118,10 @@ class FindDialog(QtWidgets.QDialog):
         result = self.find(current_key,
                            self.text.text(),
                            case_sensitive=self.case_sensitive.isChecked(),
-                           exact_match=self.exact_match.isChecked())
+                           exact_match=self.exact_match.isChecked(),
+                           search_keys=self.key_search.isChecked(),
+                           search_values=self.value_search.isChecked(),
+                           search_data=self.data_search.isChecked())
         self.parent().progress_bar.setRange(0, 100)
         self.parent().progress_bar.hide()
 
@@ -135,7 +138,7 @@ class FindDialog(QtWidgets.QDialog):
         if result_type == ResultType.VALUE or result_type == ResultType.DATA:
             self.parent().value_table.select_value(result_value)
 
-    def find(self, starting_key: Registry.RegistryKey, term: str, case_sensitive=False, exact_match=False, search_keys=True, search_values=True, search_data=True) -> tuple[ResultType, str, str]:
+    def find(self, starting_key: Registry.RegistryKey, term: str, case_sensitive=False, exact_match=False, search_keys=True, search_values=True, search_data=True, reverse=False) -> tuple[ResultType, str, str]:
         """Find the next matching subkey or value. Returns (ResultType, key, value)"""
 
         if not case_sensitive:
@@ -158,19 +161,19 @@ class FindDialog(QtWidgets.QDialog):
             """Returns (ResultType, key, value)"""
 
             # Check the start key name if asked (i.e. if the search has just started)
-            if self.key_search.isChecked() and not skip_start_key_name:
+            if search_keys and not skip_start_key_name:
                 if check_match(start_key.name()):
                     return ResultType.KEY, start_key.path(), None
 
             values = start_key.values()[start_at_value:]
             # Skip extra looping if values and data are not searched for
-            if self.value_search.isChecked() or self.data_search.isChecked():
+            if search_values or search_data:
                 for value in values:
                     # Check through the value
-                    if self.value_search.isChecked() and check_match(value.name()):
+                    if search_values and check_match(value.name()):
                         return ResultType.VALUE, start_key.path(), value.name()
                     # Check through the value's data
-                    if self.data_search.isChecked() and (
+                    if search_data and (
                             check_match(str(value.value())) or
                             check_match(self.parent().value_table.reg_data_to_str(value.value_type(), value.raw_data(), value.value()))):
                         return ResultType.DATA, start_key.path(), value.name()
@@ -178,7 +181,7 @@ class FindDialog(QtWidgets.QDialog):
             # Recurse through the subkeys
             for subkey in start_key.subkeys():
                 # Check subkey name
-                if self.key_search.isChecked() and check_match(subkey.name()):
+                if search_keys and check_match(subkey.name()):
                     return ResultType.KEY, subkey.path(), None
                 result = search(subkey, term)
                 if result is not None:
