@@ -113,6 +113,10 @@ class RegViewer(QtWidgets.QMainWindow):
             QtGui.QIcon(helpers.resource_path("img/find.png")), "Find", toolbar)
         find_action.triggered.connect(self.show_find)
         toolbar.addAction(find_action)
+        find_next_action = QtGui.QAction(
+            QtGui.QIcon(helpers.resource_path("img/find_next.png")), "Find Next", toolbar)
+        find_next_action.triggered.connect(self.find_dialog.handle_find)
+        toolbar.addAction(find_next_action)
         self.addToolBar(toolbar)
 
         # Set up main layout
