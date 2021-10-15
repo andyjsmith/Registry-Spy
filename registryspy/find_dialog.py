@@ -111,6 +111,7 @@ class FindDialog(QtWidgets.QDialog):
 
         self.parent().progress_bar.show()
         self.parent().progress_bar.setRange(0, 0)
+        self.parent().progress_bar.setValue(1)
         self.parent().progress_bar.setValue(0)
         result = self.find(current_key,
                            self.text.text(),
@@ -159,12 +160,18 @@ class FindDialog(QtWidgets.QDialog):
                 if check_match(start_key.name()):
                     return ResultType.KEY, start_key.path(), None
 
-            # Check through the key's values
             values = start_key.values()[start_at_value:]
-            if self.value_search.isChecked():
+            # Skip extra looping if values and data are not searched for
+            if self.value_search.isChecked() or self.data_search.isChecked():
                 for value in values:
-                    if check_match(value.name()):
+                    # Check through the value
+                    if self.value_search.isChecked() and check_match(value.name()):
                         return ResultType.VALUE, start_key.path(), value.name(),
+                    # Check through the value's data
+                    if self.data_search.isChecked() and (
+                            check_match(str(value.value())) or
+                            check_match(self.parent().value_table.reg_data_to_str(value.value_type(), value.raw_data(), value.value()))):
+                        return ResultType.DATA, start_key.path(), value.name()
 
             # Recurse through the subkeys
             for subkey in start_key.subkeys():
