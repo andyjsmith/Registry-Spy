@@ -166,7 +166,7 @@ class FindDialog(QtWidgets.QDialog):
                 for value in values:
                     # Check through the value
                     if self.value_search.isChecked() and check_match(value.name()):
-                        return ResultType.VALUE, start_key.path(), value.name(),
+                        return ResultType.VALUE, start_key.path(), value.name()
                     # Check through the value's data
                     if self.data_search.isChecked() and (
                             check_match(str(value.value())) or
