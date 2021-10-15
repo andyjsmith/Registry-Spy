@@ -29,6 +29,8 @@ class FindDialog(QtWidgets.QDialog):
         text_group.setLayout(text_group_layout)
         self.text = QtWidgets.QLineEdit()
         self.text.setClearButtonEnabled(True)
+        self.text.setToolTip(
+            "For binary data, enter it in hexadecimal with spaces between bytes. E.g. 0A 54 D3")
         text_group_layout.addWidget(self.text)
 
         find_btn = QtWidgets.QPushButton("Find Next")
