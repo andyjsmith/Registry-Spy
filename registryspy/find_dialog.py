@@ -67,6 +67,11 @@ class FindDialog(QtWidgets.QDialog):
                 "Select a key or hive first.", alert_type=helpers.MessageBoxTypes.CRITICAL)
             return
 
+        if self.text.text() == "":
+            helpers.show_message_box(
+                "Enter a search term first.", alert_type=helpers.MessageBoxTypes.CRITICAL)
+            return
+
         hive: Registry.Registry = self.parent().tree.reg[active_key.filename]
         key = hive.open(active_key.path)
         self.close()
