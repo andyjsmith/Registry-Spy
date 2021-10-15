@@ -1,6 +1,9 @@
 import os
 import sys
 
+import PySide6.QtWidgets as QtWidgets
+
+
 APP_NAME = "Registry Spy"
 VERSION = (0, 0, 1)
 ABOUT_TEXT = f"""\
@@ -32,3 +35,19 @@ def resource_path(relative_path: str) -> str:
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+
+
+class MessageBoxTypes:
+    INFORMATION = (QtWidgets.QMessageBox.Information, "Information")
+    WARNING = (QtWidgets.QMessageBox.Warning, "Warning")
+    CRITICAL = (QtWidgets.QMessageBox.Critical, "Error")
+    QUESTION = (QtWidgets.QMessageBox.Question, "Question")
+
+
+def show_message_box(text, alert_type=MessageBoxTypes.INFORMATION, title=None):
+    msgbox = QtWidgets.QMessageBox()
+    if title is None:
+        msgbox.setWindowTitle(alert_type[1])
+    msgbox.setText(text)
+    msgbox.setIcon(alert_type[0])
+    return msgbox.exec()

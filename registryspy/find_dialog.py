@@ -63,12 +63,8 @@ class FindDialog(QtWidgets.QDialog):
         if active_key is None:
             self.close()
             self.accept()
-            msgbox = QtWidgets.QMessageBox()
-            msgbox.setWindowTitle("Error")
-            msgbox.setText(
-                "Select a key or hive first.")
-            msgbox.setIcon(QtWidgets.QMessageBox.Critical)
-            msgbox.exec()
+            helpers.show_message_box(
+                "Select a key or hive first.", alert_type=helpers.MessageBoxTypes.CRITICAL)
             return
 
         hive: Registry.Registry = self.parent().tree.reg[active_key.filename]
@@ -85,12 +81,8 @@ class FindDialog(QtWidgets.QDialog):
 
         if result is None:
             self.parent().tree.select_key_from_path("")
-            msgbox = QtWidgets.QMessageBox()
-            msgbox.setWindowTitle("Warning")
-            msgbox.setText(
-                "Term not found. Looping back to start.")
-            msgbox.setIcon(QtWidgets.QMessageBox.Warning)
-            msgbox.exec()
+            helpers.show_message_box(
+                "Term not found. Looping back to start.", alert_type=helpers.MessageBoxTypes.WARNING)
             return
         sanitized_path = self.parent().tree.parse_uri(result, root=hive.root().name())
         self.parent().tree.select_key_from_path(sanitized_path)

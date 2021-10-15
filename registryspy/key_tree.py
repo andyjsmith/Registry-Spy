@@ -53,12 +53,8 @@ class KeyTree(QtWidgets.QTreeWidget):
         """Returns the root KeyItem of the selected KeyItem"""
         key = self.get_selected_key()
         if key is None:
-            msgbox = QtWidgets.QMessageBox()
-            msgbox.setWindowTitle("Error")
-            msgbox.setText(
-                "No key selected, select a key first.")
-            msgbox.setIcon(QtWidgets.QMessageBox.Warning)
-            msgbox.exec()
+            helpers.show_message_box(
+                "No key selected, select a key first.", alert_type=helpers.MessageBoxTypes.CRITICAL)
             return
         if self.roots.get(key.filename) is not None:
             return self.roots[key.filename]
@@ -92,22 +88,15 @@ class KeyTree(QtWidgets.QTreeWidget):
 
         # Remove hive before loading another one
         if self.roots.get(filename) is not None:
-            msgbox = QtWidgets.QMessageBox()
-            msgbox.setWindowTitle("Error")
-            msgbox.setText(
-                "Registry hive already open, close it first before opening again")
-            msgbox.setIcon(QtWidgets.QMessageBox.Warning)
-            msgbox.exec()
+            helpers.show_message_box(
+                "Registry hive already open, close it first before opening again", alert_type=helpers.MessageBoxTypes.CRITICAL)
             return
 
         try:
             self.reg[filename] = Registry.Registry(filename)
         except (Registry.RegistryParse.ParseException, struct.error):
-            msgbox = QtWidgets.QMessageBox()
-            msgbox.setWindowTitle("Error")
-            msgbox.setText("Unable to parse registry file")
-            msgbox.setIcon(QtWidgets.QMessageBox.Critical)
-            msgbox.exec()
+            helpers.show_message_box(
+                "Unable to parse registry file", alert_type=helpers.MessageBoxTypes.CRITICAL)
             return
 
         # Create new root KeyItem
@@ -252,12 +241,8 @@ class KeyTree(QtWidgets.QTreeWidget):
         try:
             self.reg[root.filename].open(parsed_uri)
         except Registry.RegistryKeyNotFoundException:
-            msgbox = QtWidgets.QMessageBox()
-            msgbox.setWindowTitle("Error")
-            msgbox.setText(
-                "Key was not found")
-            msgbox.setIcon(QtWidgets.QMessageBox.Critical)
-            msgbox.exec()
+            helpers.show_message_box(
+                "Key was not found", alert_type=helpers.MessageBoxTypes.CRITICAL)
             return
 
         key = self.select_key_from_path(parsed_uri)
