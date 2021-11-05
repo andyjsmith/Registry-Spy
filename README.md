@@ -1,7 +1,7 @@
-![Registry Spy](registryspy/img/wordmark.png)
+![Registry Spy](https://github.com/andyjsmith/Registry-Spy/raw/master/registryspy/img/wordmark.png)
 
 <p align="center">
-  <img src="registryspy/img/wordmark.png" width=350/>
+  <img src="https://github.com/andyjsmith/Registry-Spy/raw/master/registryspy/img/wordmark.png" width=350/>
 </p>
 
 #
@@ -16,7 +16,7 @@ Registry Spy
 
 ## Requirements
 
--   Python 3.5+ ???
+-   Python 3.6+
 
 ## Installation
 
