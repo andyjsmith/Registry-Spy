@@ -1,10 +1,6 @@
 ![Registry Spy](https://github.com/andyjsmith/Registry-Spy/raw/master/registryspy/img/wordmark.png)
 
-## Registry Spy: Cross-Platform Windows Registry Browser
-
-#
-
-## Description
+# Registry Spy: Cross-Platform Windows Registry Browser
 
 Registry Spy is a free, open-source cross-platform Windows Registry viewer. It is a fast, modern, and versatile explorer for raw registry files.
 
@@ -22,7 +18,7 @@ Features include:
 
 ## Installation
 
-Download the latest version from the [releases page](https://github.com/andyjsmith/Registry-Spy/releases). Alternatively, use on of the following methods.
+Download the latest version from the [releases page](https://github.com/andyjsmith/Registry-Spy/releases). Alternatively, use one of the following methods.
 
 ### pip (recommended)
 
