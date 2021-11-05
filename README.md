@@ -1,24 +1,28 @@
 ![Registry Spy](https://github.com/andyjsmith/Registry-Spy/raw/master/registryspy/img/wordmark.png)
 
-<p align="center">
-  <img src="https://github.com/andyjsmith/Registry-Spy/raw/master/registryspy/img/wordmark.png" width=350/>
-</p>
-
-#
-
 ## Registry Spy: Cross-Platform Windows Registry Browser
 
 #
 
 ## Description
 
-Registry Spy
+Registry Spy is a free, open-source cross-platform Windows Registry viewer. It is a fast, modern, and versatile explorer for raw registry files.
+
+Features include:
+
+-   Fast, on-the-fly parsing means no upfront overhead
+-   Open multiple hives at a time
+-   Searching
+-   Hex viewer
+-   Modification timestamps
 
 ## Requirements
 
 -   Python 3.6+
 
 ## Installation
+
+Download the latest version from the [releases page](https://github.com/andyjsmith/Registry-Spy/releases). Alternatively, use on of the following methods.
 
 ### pip (recommended)
 
