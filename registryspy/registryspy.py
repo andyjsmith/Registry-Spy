@@ -25,9 +25,21 @@ class RegViewer(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.settings = QtCore.QSettings()
+
+        use_native_style = self.settings.value(
+            "view/native_style", False, bool)
+
+        if not use_native_style:
+            app.setStyle("fusion")
+
         # Set up main window
-        self.setWindowTitle(helpers.APP_NAME)
         self.resize(1200, 700)
+        self.setWindowTitle(helpers.APP_NAME)
+
+        # Restore window geometry from settings
+        self.restoreGeometry(self.settings.value(
+            "view/geometry", QtCore.QByteArray()))
 
         self.tree = key_tree.KeyTree(self)
         self.find_dialog = find_dialog.FindDialog(self)
@@ -64,15 +76,16 @@ class RegViewer(QtWidgets.QMainWindow):
         find_next_action.setShortcut(QtGui.QKeySequence.FindNext)
         find_next_action.triggered.connect(self.find_dialog.handle_find)
         find_menu.addAction(find_next_action)
-        find_previous_action = QtGui.QAction("Find Previous", self)
-        find_previous_action.setShortcut(QtGui.QKeySequence.FindPrevious)
-        find_menu.addAction(find_previous_action)
+        # find_previous_action = QtGui.QAction("Find Previous", self)
+        # find_previous_action.setShortcut(QtGui.QKeySequence.FindPrevious)
+        # find_menu.addAction(find_previous_action)
         self.menuBar().addMenu(find_menu)
 
         # Set up view menu
         view_menu = QtWidgets.QMenu("&View", self)
         self.native_style_action = QtGui.QAction("Use native style", self)
         self.native_style_action.setCheckable(True)
+        self.native_style_action.setChecked(use_native_style)
         self.native_style_action.toggled.connect(self.toggle_style)
         view_menu.addAction(self.native_style_action)
         self.menuBar().addMenu(view_menu)
@@ -209,14 +222,25 @@ class RegViewer(QtWidgets.QMainWindow):
     def toggle_style(self):
         if self.native_style_action.isChecked():
             app.setStyle(initial_style)
+            self.settings.setValue("view/native_style", True)
         else:
             app.setStyle("fusion")
+            self.settings.setValue("view/native_style", False)
+
+    def closeEvent(self, event):
+        """Save the current geometry of the application"""
+        self.settings.setValue("view/geometry", self.saveGeometry())
+        event.accept()
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+
+    app.setOrganizationName(helpers.ORGANIZATION_NAME)
+    app.setOrganizationDomain(helpers.ORGANIZATION_DOMAIN)
+    app.setApplicationName(helpers.APP_NAME)
+
     initial_style = app.style().name()
-    app.setStyle("fusion")
 
     # f = QtCore.QFile("qdarkstyle/dark/style.qss")
     # f.open(QtCore.QFile.ReadOnly | QtCore.QFile.Text)
