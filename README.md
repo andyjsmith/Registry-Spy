@@ -34,7 +34,7 @@ Download the latest version from the [releases page](https://github.com/andyjsmi
 ### Standalone
 
 1. `pip install -r requirements.txt`
-2. `python registryspy/registryspy.py`
+2. `python registryspy.py`
 
 ## Usage
 

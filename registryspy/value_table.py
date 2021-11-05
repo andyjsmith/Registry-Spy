@@ -5,7 +5,7 @@ import PySide6.QtWidgets as QtWidgets
 import PySide6.QtGui as QtGui
 import PySide6.QtCore as QtCore
 
-import helpers
+from . import helpers
 
 
 class ValueData(QtWidgets.QTableWidgetItem):

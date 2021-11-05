@@ -4,12 +4,12 @@ import PySide6.QtGui as QtGui
 import PySide6.QtWidgets as QtWidgets
 import PySide6.QtCore as QtCore
 
-import value_table
-import key_tree
-import hive_info_table
-import license_dialog
-import find_dialog
-import helpers
+from . import value_table
+from . import key_tree
+from . import hive_info_table
+from . import license_dialog
+from . import find_dialog
+from . import helpers
 
 
 # Set the app ID on windows (helps with making sure icon is used)
@@ -25,13 +25,16 @@ class RegViewer(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.app = QtWidgets.QApplication.instance()
         self.settings = QtCore.QSettings()
+
+        self.initial_style = self.app.style().name()
 
         use_native_style = self.settings.value(
             "view/native_style", False, bool)
 
         if not use_native_style:
-            app.setStyle("fusion")
+            self.app.setStyle("fusion")
 
         # Set up main window
         self.resize(1200, 700)
@@ -221,10 +224,10 @@ class RegViewer(QtWidgets.QMainWindow):
 
     def toggle_style(self):
         if self.native_style_action.isChecked():
-            app.setStyle(initial_style)
+            self.app.setStyle(self.initial_style)
             self.settings.setValue("view/native_style", True)
         else:
-            app.setStyle("fusion")
+            self.app.setStyle("fusion")
             self.settings.setValue("view/native_style", False)
 
     def closeEvent(self, event):
@@ -233,14 +236,12 @@ class RegViewer(QtWidgets.QMainWindow):
         event.accept()
 
 
-if __name__ == "__main__":
+def main():
     app = QtWidgets.QApplication(sys.argv)
 
     app.setOrganizationName(helpers.ORGANIZATION_NAME)
     app.setOrganizationDomain(helpers.ORGANIZATION_DOMAIN)
     app.setApplicationName(helpers.APP_NAME)
-
-    initial_style = app.style().name()
 
     # f = QtCore.QFile("qdarkstyle/dark/style.qss")
     # f.open(QtCore.QFile.ReadOnly | QtCore.QFile.Text)
@@ -298,3 +299,7 @@ if __name__ == "__main__":
             reg_viewer.open_file(filename)
 
     sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()

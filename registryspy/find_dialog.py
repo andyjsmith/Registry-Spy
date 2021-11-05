@@ -4,8 +4,8 @@ import PySide6.QtCore as QtCore
 import PySide6.QtWidgets as QtWidgets
 from Registry import Registry
 
-import helpers
-import key_tree
+from . import helpers
+from . import key_tree
 
 
 class ResultType(enum.Enum):

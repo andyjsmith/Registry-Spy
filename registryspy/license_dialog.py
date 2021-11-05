@@ -1,7 +1,7 @@
 import PySide6.QtCore as QtCore
 import PySide6.QtWidgets as QtWidgets
 
-import helpers
+from . import helpers
 
 
 class LicenseDialog(QtWidgets.QDialog):

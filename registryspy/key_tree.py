@@ -5,7 +5,7 @@ import PySide6.QtCore as QtCore
 import PySide6.QtWidgets as QtWidgets
 import PySide6.QtGui as QtGui
 
-import helpers
+from . import helpers
 
 
 class KeyItem(QtWidgets.QTreeWidgetItem):
