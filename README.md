@@ -45,6 +45,7 @@ PyInstaller 4.5+
 ## License
 
 Registry Spy
+
 Copyright (C) 2021 Andy Smith
 
 This program is free software: you can redistribute it and/or modify
