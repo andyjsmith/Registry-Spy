@@ -1,0 +1,2 @@
+include *.py
+recursive-include registryspy *.py *.png *.txt *.ico
