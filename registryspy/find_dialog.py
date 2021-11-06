@@ -138,7 +138,7 @@ class FindDialog(QtWidgets.QDialog):
         if result_type == ResultType.VALUE or result_type == ResultType.DATA:
             self.parent().value_table.select_value(result_value)
 
-    def find(self, starting_key: Registry.RegistryKey, term: str, case_sensitive=False, exact_match=False, search_keys=True, search_values=True, search_data=True, reverse=False) -> tuple[ResultType, str, str]:
+    def find(self, starting_key: Registry.RegistryKey, term: str, case_sensitive=False, exact_match=False, search_keys=True, search_values=True, search_data=True, reverse=False) -> "tuple[ResultType, str, str]":
         """Find the next matching subkey or value. Returns (ResultType, key, value)"""
 
         if not case_sensitive:
