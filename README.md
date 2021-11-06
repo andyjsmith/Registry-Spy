@@ -48,7 +48,14 @@ Download the latest version from the [releases page](https://github.com/andyjsmi
 
 ## Building
 
-PyInstaller 4.5+
+Dependencies:
+
+-   PyInstaller 4.5+
+
+Regular building:
+`pyinstaller registryspy_install.spec`
+
+Creating a single file: `pyinstaller registryspy_onefile.spec`
 
 ## License
 
