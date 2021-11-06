@@ -157,7 +157,7 @@ class FindDialog(QtWidgets.QDialog):
 
             return False
 
-        def search(start_key: Registry.RegistryKey, term: str, start_at_value=0, skip_start_key_name=False) -> tuple[ResultType, str, str]:
+        def search(start_key: Registry.RegistryKey, term: str, start_at_value=0, skip_start_key_name=False) -> "tuple[ResultType, str, str]":
             """Returns (ResultType, key, value)"""
 
             # Check the start key name if asked (i.e. if the search has just started)
