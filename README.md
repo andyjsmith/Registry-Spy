@@ -36,7 +36,15 @@ Download the latest version from the [releases page](https://github.com/andyjsmi
 1. `pip install -r requirements.txt`
 2. `python registryspy.py`
 
-## Usage
+## Screenshots
+
+#### Main Window
+
+![Main Window](https://github.com/andyjsmith/Registry-Spy/raw/master/screenshots/main.png)
+
+#### Find Dialog
+
+![Find Dialog](https://github.com/andyjsmith/Registry-Spy/raw/master/screenshots/find.png)
 
 ## Building
 
