@@ -131,10 +131,10 @@ class KeyTree(QtWidgets.QTreeWidget):
         uri = uri.strip()
         uri = uri.strip("\\")
         if hive_type is not None:
-            uri = uri.replace(hive_type + "\\", "")
+            uri = uri.replace(hive_type + "\\", "", 1)
             uri = uri.strip("\\")
         if root is not None:
-            uri = uri.replace(root + "\\", "")
+            uri = uri.replace(root + "\\", "", 1)
             uri = uri.strip("\\")
 
         if uri == "" or uri == hive_type:
@@ -144,7 +144,7 @@ class KeyTree(QtWidgets.QTreeWidget):
 
     def remove_hive_prefix(self, root_name: str, path: str) -> str:
         prefix = root_name + "\\"
-        return path.replace(prefix, "")
+        return path.replace(prefix, "", 1)
 
     def load_subkeys(self, key: KeyItem):
         for i in range(key.childCount()):

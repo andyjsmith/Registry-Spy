@@ -8,10 +8,10 @@
 			"name": "Python: Registry Spy",
 			"type": "python",
 			"request": "launch",
-			"program": "registryspy.py",
+			"program": "run.py",
 			"console": "integratedTerminal",
-			"cwd": "${workspaceFolder}/registryspy",
-			"args": ["../sample_hives/COMPONENTS"]
+			"cwd": "${workspaceFolder}",
+			"args": ["sample_hives/COMPONENTS"]
 		}
 	]
 }
