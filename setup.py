@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="registryspy",
-    version="1.0.0",
+    version="1.0.1",
     author="Andy Smith",
     description="Cross-platform Windows Registry browser",
     long_description=long_description,
@@ -30,7 +30,7 @@ setup(
         "Environment :: MacOS X"
     ],
     packages=find_packages(),
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     install_requires=[
         "PySide6",
         "python-registry"

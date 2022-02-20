@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define AppName "Registry Spy"
-#define AppVersion "1.0.0"
+#define AppVersion "1.0.1"
 #define AppPublisher "Andy Smith"
 #define AppURL "https://ajsmith.us/projects/registry-spy/"
 #define AppExeName "registryspy.exe"
