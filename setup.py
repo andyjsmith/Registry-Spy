@@ -32,8 +32,8 @@ setup(
     packages=find_packages(),
     python_requires=">=3.8",
     install_requires=[
-        "PySide6",
-        "python-registry"
+        "PySide6==6.2.3",
+        "python-registry==1.3.1"
     ],
     entry_points={
         "console_scripts": ["registryspy=registryspy.registryspy:main"],
