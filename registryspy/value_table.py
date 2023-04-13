@@ -59,24 +59,12 @@ class ValueTable(QtWidgets.QTableWidget):
         index = selected.indexes()[2]
 
         value: ValueData = self.itemFromIndex(index)
-
-        hex_text = ""
-
-        def chunks(lst, n):
-            """Yield successive n-sized chunks from lst."""
-            for i in range(0, len(lst), n):
-                yield lst[i:i + n]
-
-        for chunk in chunks(value.raw_data, 16):
-            hex_text += " ".join(["{:02x}".format(x)
-                                  for x in chunk]) + "\n"
-
-        self.window().value_hex.setPlainText(hex_text)
+        self.window().data_viewer.set_value(value.raw_data)
 
     def set_data(self, reg_values: "list[Registry.RegistryValue]"):
         self.clearContents()
         self.setRowCount(0)
-        self.window().value_hex.setPlainText("")
+        self.window().data_viewer.set_value(b"")
 
         for value in reg_values:
             index = self.rowCount()

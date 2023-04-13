@@ -4,6 +4,7 @@ import PySide6.QtGui as QtGui
 import PySide6.QtWidgets as QtWidgets
 import PySide6.QtCore as QtCore
 
+from . import data_viewer
 from . import value_table
 from . import key_tree
 from . import hive_info_table
@@ -167,16 +168,11 @@ class RegViewer(QtWidgets.QMainWindow):
             self.hive_info.SizeAdjustPolicy.AdjustToContents)
         tree_container_layout.addWidget(self.hive_info)
 
-        value_splitter = QtWidgets.QSplitter(
-            QtGui.Qt.Orientation.Vertical)
+        self.data_viewer = data_viewer.DataViewer()
+
+        value_splitter = QtWidgets.QSplitter(QtGui.Qt.Orientation.Vertical)
         value_splitter.addWidget(self.value_table)
-        self.value_hex = QtWidgets.QPlainTextEdit()
-        mono_font = QtGui.QFont()
-        mono_font.setFamilies(["Courier New", "Monospaced"])
-        mono_font.setStyleHint(QtGui.QFont.Monospace)
-        self.value_hex.setFont(mono_font)
-        self.value_hex.setLineWrapMode(self.value_hex.LineWrapMode.NoWrap)
-        value_splitter.addWidget(self.value_hex)
+        value_splitter.addWidget(self.data_viewer)
         value_splitter.setStretchFactor(0, 2)
         value_splitter.setStretchFactor(1, 1)
 
