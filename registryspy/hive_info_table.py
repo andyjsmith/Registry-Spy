@@ -28,7 +28,7 @@ class HiveInfoTable(QtWidgets.QTableWidget):
         self.setHorizontalScrollMode(
             QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.setWordWrap(False)
-        self.verticalHeader().setSectionResizeMode(self.verticalHeader().Fixed)
+        self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Fixed)
 
         # Call so that the cells become uneditable
         self.set_info("", "", "", "")

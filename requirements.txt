@@ -1,2 +1,2 @@
-PySide6
-python-registry
+PySide6>=6.5.0
+python-registry>=1.3.1
