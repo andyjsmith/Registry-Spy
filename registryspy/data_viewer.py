@@ -1,6 +1,8 @@
 import PySide6.QtGui as QtGui
 import PySide6.QtWidgets as QtWidgets
 
+from . import helpers
+
 
 class DataViewer(QtWidgets.QSplitter):
     """Viewer to preview data of the selected registry key entry."""
@@ -34,15 +36,18 @@ class DataViewer(QtWidgets.QSplitter):
         def chunks(lst, n):
             """Yield successive n-sized chunks from lst."""
             for i in range(0, len(lst), n):
-                yield lst[i:i + n]
+                yield lst[i : i + n]
 
         hex_text = ""
         ascii_text = ""
 
         for chunk in chunks(bytes, 16):
-            hex_text += " ".join(["{:02x}".format(x)
-                                  for x in chunk]) + "\n"
-            ascii_text += chunk.decode("windows-1252", "replace").replace(chr(0), ".") + "\n"
+            hex_text += " ".join(["{:02x}".format(x) for x in chunk]) + "\n"
+
+            # Decode text, replace control/non-printable characters
+            decoded_text = helpers.bytes_to_printable(chunk)
+
+            ascii_text += decoded_text + "\n"
 
         self.value_hex.setPlainText(hex_text)
         self.value_ascii.setPlainText(ascii_text)
