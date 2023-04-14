@@ -1,20 +1,24 @@
 ![Registry Spy](https://github.com/andyjsmith/Registry-Spy/raw/master/registryspy/img/wordmark.png)
 
+![](https://img.shields.io/github/v/release/andyjsmith/Registry-Spy)
+![](https://img.shields.io/github/downloads/andyjsmith/Registry-Spy/total)
+
 # Registry Spy: Cross-Platform Windows Registry Browser
 
 Registry Spy is a free, open-source cross-platform Windows Registry viewer. It is a fast, modern, and versatile explorer for raw registry files.
 
 Features include:
 
--   Fast, on-the-fly parsing means no upfront overhead
--   Open multiple hives at a time
--   Searching
--   Hex viewer
--   Modification timestamps
+- Windows, macOS, and Linux support
+- Fast, on-the-fly parsing means no upfront overhead
+- Open multiple hives at a time
+- Searching
+- Hex viewer
+- Modification timestamps
 
 ## Requirements
 
--   Python 3.8+
+- Python 3.8+
 
 ## Installation
 
@@ -50,18 +54,32 @@ Download the latest version from the [releases page](https://github.com/andyjsmi
 
 Dependencies:
 
--   PyInstaller 4.5+
+- PyInstaller 5.10+
+
+Delete any existing venv, dist, and build directories.
+
+Create and activate a new venv and install the requirements.txt and pyinstaller.
 
 Regular building:
 `pyinstaller registryspy_install.spec`
 
 Creating a single file: `pyinstaller registryspy_onefile.spec`
 
+Create the EXE installer with Inno Setup.
+
+PyPI:
+
+- `pip3 install build twine`
+- `python3 -m build`
+- `twine upload -r testpypi dist/*`
+- `pip3 install -i https://test.pypi.org/simple/ registryspy`
+- `twine upload dist/*`
+
 ## License
 
 Registry Spy
 
-Copyright (C) 2021 Andy Smith
+Copyright (C) 2023 Andy Smith
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
