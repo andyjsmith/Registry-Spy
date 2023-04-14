@@ -6,7 +6,7 @@ import PySide6.QtWidgets as QtWidgets
 
 
 APP_NAME = "Registry Spy"
-VERSION = (1, 0, 2)
+VERSION = (1, 1, 0)
 ORGANIZATION_NAME = "Andy Smith"
 ORGANIZATION_DOMAIN = "ajsmith.org"
 ABOUT_TEXT = f"""\

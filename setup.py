@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="registryspy",
-    version="1.0.2",
+    version="1.1.0",
     author="Andy Smith",
     description="Cross-platform Windows Registry browser",
     long_description=long_description,
