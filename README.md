@@ -19,6 +19,9 @@ Features include:
 ## Requirements
 
 - Python 3.8+
+- Windows 10 1809+, macOS, or Linux
+  - See [https://doc.qt.io/qt-6/supported-platforms.html](https://doc.qt.io/qt-6/supported-platforms.html)
+  - Older Linux versions than what are listed at the link above may work correctly
 
 ## Installation
 
